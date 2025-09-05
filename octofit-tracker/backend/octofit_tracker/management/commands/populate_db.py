@@ -6,35 +6,56 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Clear existing data
-        User.objects.all().delete()
-        Team.objects.all().delete()
-        Activity.objects.all().delete()
-        Leaderboard.objects.all().delete()
-        Workout.objects.all().delete()
+        for obj in Activity.objects.all():
+            if getattr(obj, 'id', None):
+                obj.delete()
+        for obj in Leaderboard.objects.all():
+            if getattr(obj, 'id', None):
+                obj.delete()
+        for obj in Workout.objects.all():
+            if getattr(obj, 'id', None):
+                obj.delete()
+        for obj in User.objects.all():
+            if getattr(obj, 'id', None):
+                obj.delete()
+        for obj in Team.objects.all():
+            if getattr(obj, 'id', None):
+                obj.delete()
 
         # Teams
-        marvel = Team.objects.create(name='Marvel', description='Marvel Superheroes')
-        dc = Team.objects.create(name='DC', description='DC Superheroes')
+        teams = []
+        for i in range(1, 21):
+            team = Team.objects.create(name=f'Team{i}', description=f'Description for Team{i}')
+            teams.append(team)
 
         # Users
-        ironman = User.objects.create(email='ironman@marvel.com', name='Iron Man', team='Marvel')
-        captain = User.objects.create(email='captain@marvel.com', name='Captain America', team='Marvel')
-        batman = User.objects.create(email='batman@dc.com', name='Batman', team='DC')
-        superman = User.objects.create(email='superman@dc.com', name='Superman', team='DC')
+        users = []
+        for i in range(1, 21):
+            team_name = teams[i % len(teams)].name
+            user = User.objects.create(email=f'user{i}@example.com', name=f'User{i}', team=team_name)
+            users.append(user)
 
         # Activities
-        Activity.objects.create(user=ironman, type='Running', duration=30, date='2025-09-01T10:00:00Z')
-        Activity.objects.create(user=captain, type='Cycling', duration=45, date='2025-09-02T11:00:00Z')
-        Activity.objects.create(user=batman, type='Swimming', duration=60, date='2025-09-03T12:00:00Z')
-        Activity.objects.create(user=superman, type='Flying', duration=120, date='2025-09-04T13:00:00Z')
+        activity_types = ['Running', 'Cycling', 'Swimming', 'Yoga', 'Hiking']
+        for i in range(1, 21):
+            Activity.objects.create(
+                user=users[(i-1) % len(users)],
+                type=activity_types[i % len(activity_types)],
+                duration=30 + i,
+                date=f'2025-09-{(i%30)+1:02d}T10:00:00Z'
+            )
 
         # Leaderboard
-        Leaderboard.objects.create(team=marvel, points=150)
-        Leaderboard.objects.create(team=dc, points=200)
+        for i, team in enumerate(teams):
+            Leaderboard.objects.create(team=team, points=100 + i * 10)
 
         # Workouts
-        Workout.objects.create(name='Pushups', description='Upper body strength', difficulty='Easy')
-        Workout.objects.create(name='Sprints', description='Speed training', difficulty='Medium')
-        Workout.objects.create(name='Deadlift', description='Strength training', difficulty='Hard')
+        difficulties = ['Easy', 'Medium', 'Hard']
+        for i in range(1, 21):
+            Workout.objects.create(
+                name=f'Workout{i}',
+                description=f'Description for Workout{i}',
+                difficulty=difficulties[i % len(difficulties)]
+            )
 
         self.stdout.write(self.style.SUCCESS('octofit_db database populated with test data.'))
