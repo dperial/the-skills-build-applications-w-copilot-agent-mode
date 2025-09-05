@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+import os
 from rest_framework import routers
 from .views import UserViewSet, TeamViewSet, ActivityViewSet, LeaderboardViewSet, WorkoutViewSet
 from rest_framework.decorators import api_view
@@ -35,6 +36,28 @@ def api_root(request):
         'activities': '/api/activities/',
         'leaderboard': '/api/leaderboard/',
         'workouts': '/api/workouts/',
+    })
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
+    path('', api_root, name='api_root'),
+]
+
+
+# Correction de la syntaxe et ajout dynamique des URLs dans api_root
+codespace_name = os.environ.get('CODESPACE_NAME')
+base_url = f'https://{codespace_name}-8000.app.github.dev' if codespace_name else ''
+
+@api_view(['GET'])
+def api_root(request):
+    api_prefix = f'{base_url}/api' if base_url else '/api'
+    return Response({
+        'users': f'{api_prefix}/users/',
+        'teams': f'{api_prefix}/teams/',
+        'activities': f'{api_prefix}/activities/',
+        'leaderboard': f'{api_prefix}/leaderboard/',
+        'workouts': f'{api_prefix}/workouts/',
     })
 
 urlpatterns = [
