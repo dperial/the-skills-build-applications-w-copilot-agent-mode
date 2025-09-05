@@ -20,6 +20,10 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class ActivitySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    team = serializers.SerializerMethodField()
+
+    def get_team(self, obj):
+        return TeamSerializer(obj.user.team).data if obj.user and obj.user.team else None
     class Meta:
         model = Activity
         fields = '__all__'
