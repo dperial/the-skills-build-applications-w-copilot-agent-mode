@@ -31,8 +31,7 @@ class Command(BaseCommand):
         # Users
         users = []
         for i in range(1, 21):
-            team_name = teams[i % len(teams)].name
-            user = User.objects.create(email=f'user{i}@example.com', name=f'User{i}', team=team_name)
+            user = User.objects.create(email=f'user{i}@example.com', name=f'User{i}', team=teams[i % len(teams)])
             users.append(user)
 
         # Activities
