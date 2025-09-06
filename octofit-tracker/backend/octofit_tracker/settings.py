@@ -47,6 +47,11 @@ INSTALLED_APPS = [
     'corsheaders',
     'octofit_tracker',
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
