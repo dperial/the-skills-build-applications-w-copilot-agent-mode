@@ -20,14 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k=x#xjk1kt#etd5%as!d#^@6kxp!)t!vc$2&+ay6as!2&9sh)r'
+SECRET_KEY = 'django-insecure-(c0cd(%aase@y)ev$=6l@-z0=j4365$!$xs(u#4xyd-b57itpc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 import os
-# Autorise localhost et l'URL Codespaces dynamique
-CODESPACE_NAME = os.environ.get('CODESPACE_NAME')
+CODESPACE_NAME = os.environ.get('CODESPACE_NAME', '')
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 if CODESPACE_NAME:
     ALLOWED_HOSTS.append(f'{CODESPACE_NAME}-8000.app.github.dev')
@@ -42,20 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'djongo',
-    'corsheaders',
     'octofit_tracker',
 ]
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ]
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,9 +75,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'octofit_tracker.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Database
+# MongoDB via djongo
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
@@ -95,13 +85,14 @@ DATABASES = {
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'mongodb://localhost:27017',
-            'port': 27017,
-            'username': '',
-            'password': '',
-            'authSource': '',
         }
     }
 }
+
+# CORS
+INSTALLED_APPS += ['corsheaders', 'rest_framework']
+MIDDLEWARE.insert(0, 'corsheaders.middleware.CorsMiddleware')
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Password validation
@@ -136,16 +127,9 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
-# CORS configuration
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
-CORS_ALLOW_METHODS = ['*']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
