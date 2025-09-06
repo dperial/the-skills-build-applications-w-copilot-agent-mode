@@ -32,7 +32,7 @@ const Users = () => {
               <tr key={user.id || idx}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>{user.team}</td>
+                <td>{user.team?.name || '-'}</td>
               </tr>
             ))}
           </tbody>

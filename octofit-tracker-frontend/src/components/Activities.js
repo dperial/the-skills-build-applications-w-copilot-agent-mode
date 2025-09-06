@@ -34,7 +34,10 @@ const Activities = () => {
                 <td>{activity.type}</td>
                 <td>{activity.duration}</td>
                 <td>{activity.date}</td>
-                <td>{activity.user?.name || activity.user || '-'}</td>
+                <td>
+                  {activity.user?.name || '-'}
+                  {activity.user?.team?.name ? ` (${activity.user.team.name})` : ''}
+                </td>
               </tr>
             ))}
           </tbody>
